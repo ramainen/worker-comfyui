@@ -284,7 +284,7 @@ class TestValidateWorkflowModels(unittest.TestCase):
         self.assertIn("missing_vae.safetensors", error)
         self.assertIn("/runpod-volume/models/vae/", error)
         self.assertIn("missing_clip.safetensors", error)
-        self.assertIn("/runpod-volume/models/clip/", error)
+        self.assertIn("/runpod-volume/models/text_encoders/", error)
         # the valid second clip must not be reported
         self.assertNotIn("'t5xxl_fp16.safetensors' not found", error)
 

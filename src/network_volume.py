@@ -11,6 +11,7 @@ import os
 MODEL_TYPES = {
     "checkpoints": [".safetensors", ".ckpt", ".pt", ".pth", ".bin"],
     "clip": [".safetensors", ".pt", ".bin"],
+    "text_encoders": [".safetensors", ".pt", ".bin"],
     "clip_vision": [".safetensors", ".pt", ".bin"],
     "configs": [".yaml", ".json"],
     "controlnet": [".safetensors", ".pt", ".pth", ".bin"],
@@ -19,6 +20,7 @@ MODEL_TYPES = {
     "upscale_models": [".safetensors", ".pt", ".pth"],
     "vae": [".safetensors", ".pt", ".bin"],
     "unet": [".safetensors", ".pt", ".bin"],
+    "diffusion_models": [".safetensors", ".pt", ".bin"],
 }
 
 
