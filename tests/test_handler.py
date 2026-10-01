@@ -392,6 +392,35 @@ class TestHandlerPreflightOrdering(unittest.TestCase):
         self.assertIn("missing.safetensors", result["error"])
         mock_queue.assert_not_called()
 
+    @patch("handler.get_image_data", return_value=b"ID3audio")
+    @patch("handler.get_history")
+    @patch("handler.queue_workflow", return_value={"prompt_id": "abc"})
+    @patch("handler.websocket.WebSocket")
+    @patch("handler.check_server", return_value=True)
+    @patch("handler.requests.get")
+    def test_saved_audio_is_returned(
+        self, mock_get, mock_check_server, mock_ws_cls, mock_queue,
+        mock_history, mock_audio,
+    ):
+        mock_get.return_value = _mock_object_info_response(_make_object_info())
+        mock_history.return_value = {"abc": {"outputs": {"8": {"audio": [{
+            "filename": "song.mp3", "subfolder": "audio", "type": "output",
+        }]}}}}
+        mock_ws_cls.return_value.recv.return_value = json.dumps({
+            "type": "executing", "data": {"node": None, "prompt_id": "abc"},
+        })
+        job = {"id": "music-1", "input": {"workflow": {"1": {
+            "class_type": "CheckpointLoaderSimple",
+            "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
+        }}}}
+
+        result = handler.handler(job)
+
+        self.assertNotIn("error", result)
+        self.assertEqual(result["audio"][0]["filename"], "song.mp3")
+        self.assertEqual(base64.b64decode(result["audio"][0]["data"]), b"ID3audio")
+        mock_audio.assert_called_once_with("song.mp3", "audio", "output")
+
     @patch("handler.get_history")
     @patch("handler.queue_workflow")
     @patch("handler.websocket.WebSocket")
